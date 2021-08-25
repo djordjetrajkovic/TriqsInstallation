@@ -1,0 +1,37 @@
+$script1 = <<-'SCRIPT'
+
+sudo apt-get update && sudo apt-get install -y software-properties-common apt-transport-https curl
+curl -L https://users.flatironinstitute.org/~ccq/triqs3/bionic/public.gpg | sudo apt-key add -
+sudo add-apt-repository "deb https://users.flatironinstitute.org/~ccq/triqs3/bionic/ /"
+sudo apt-get update && sudo apt-get install -y triqs
+sudo apt-get -y install cmake g++ gfortran git hdf5-tools      libblas-dev libboost-dev libfftw3-dev libgfortran4      libgmp-dev libhdf5-dev liblapack-dev libopenmpi-dev      python3-dev python3-mako python3-matplotlib      python3-mpi4py python3-numpy python3-scipy
+sudo apt-get -y install jupyter-notebook
+sudo apt-get -y install clang libclang-dev
+sudo apt-get update && sudo apt-get install -y triqs
+sudo apt-get -y install clang libclang-dev net-tools firefox
+SCRIPT
+
+$script2 = <<-'SCRIPT'
+source /etc/lsb-release
+export CPLUS_INCLUDE_PATH=/usr/include/openmpi:/usr/include/hdf5/serial/:$CPLUS_INCLUDE_PATH
+SCRIPT
+
+
+
+Vagrant.configure("2") do |config|
+  config.vm.box = "bento/ubuntu-18.04"
+  config.vm.hostname = "triqvmsource"
+  config.vm.network "forwarded_port", guest: 8888, host: 2020
+  config.vm.network "private_network", ip: "200.128.45.66" 
+  config.vm.provider "virtualbox" do |vb|
+    vb.cpus = 2
+    vb.memory = "4096"
+    vb.name = "TriqsVMSource"	
+  end
+  #config.vm.provision "shell", inline: $script1
+  #config.vm.provision "shell", inline: $script2, privileged: false
+  config.ssh.forward_agent = true
+  config.ssh.forward_x11 = true
+  config.vm.provision "shell",
+    inline: "sudo apt-get -y update && sudo apt-get -y upgrade && sudo apt-get install -y xauth xterm"
+end
