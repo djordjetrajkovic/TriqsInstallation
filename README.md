@@ -4,7 +4,7 @@
 #### Debian/Ubuntu from package
 Execute following commands:
 
-	    sudo apt-get update
+	    	sudo apt-get update
 		sudo apt-get -y upgrade
 		sudo apt-get update && sudo apt-get install -y software-properties-common apt-transport-https curl
 ##### For Ubuntu 18.04 (bionic):
